@@ -285,10 +285,10 @@ LSB_RELEASE_EXECUTABLE:FILEPATH=/usr/bin/lsb_release
 NOSETESTS:FILEPATH=/usr/bin/nosetests-2.7
 
 //Path to a program.
-PYTHON_EXECUTABLE:FILEPATH=/usr/bin/python
+PYTHON_EXECUTABLE:FILEPATH=/usr/bin/python2
 
 //Specify specific Python version to use ('major.minor' or 'major')
-PYTHON_VERSION:STRING=
+PYTHON_VERSION:STRING=2
 
 //Path to a program.
 ProcessorCount_cmd_nproc:FILEPATH=/usr/bin/nproc
@@ -603,7 +603,7 @@ CMAKE_UNAME:INTERNAL=/bin/uname
 //ADVANCED property for variable: CMAKE_VERBOSE_MAKEFILE
 CMAKE_VERBOSE_MAKEFILE-ADVANCED:INTERNAL=1
 //Details about finding PythonInterp
-FIND_PACKAGE_MESSAGE_DETAILS_PythonInterp:INTERNAL=[/usr/bin/python][v2.7.17()]
+FIND_PACKAGE_MESSAGE_DETAILS_PythonInterp:INTERNAL=[/usr/bin/python2][v2.7.17()]
 //Details about finding Threads
 FIND_PACKAGE_MESSAGE_DETAILS_Threads:INTERNAL=[TRUE][v()]
 GMOCK_FROM_SOURCE_FOUND:INTERNAL=TRUE

@@ -15,6 +15,7 @@ msg/.*Result\.msg$
 msg/_.*\.py$
 
 .idea/
+.cmake-build-debug/
 
 \.pcd$
 .pyc$

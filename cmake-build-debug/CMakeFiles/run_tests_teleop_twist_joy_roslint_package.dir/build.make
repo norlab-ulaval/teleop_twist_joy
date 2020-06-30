@@ -54,7 +54,7 @@ CMAKE_BINARY_DIR = /home/dominic/catkin_ws/src/warthog_teleop_twist_joy/cmake-bu
 include CMakeFiles/run_tests_teleop_twist_joy_roslint_package.dir/progress.make
 
 CMakeFiles/run_tests_teleop_twist_joy_roslint_package:
-	catkin_generated/env_cached.sh /usr/bin/python /opt/ros/melodic/share/catkin/cmake/test/run_tests.py /home/dominic/catkin_ws/src/warthog_teleop_twist_joy/cmake-build-debug/test_results/teleop_twist_joy/roslint-teleop_twist_joy.xml --working-dir /home/dominic/catkin_ws/src/warthog_teleop_twist_joy/cmake-build-debug "/opt/ros/melodic/share/roslint/cmake/../../../lib/roslint/test_wrapper /home/dominic/catkin_ws/src/warthog_teleop_twist_joy/cmake-build-debug/test_results/teleop_twist_joy/roslint-teleop_twist_joy.xml make roslint_teleop_twist_joy"
+	catkin_generated/env_cached.sh /usr/bin/python2 /opt/ros/melodic/share/catkin/cmake/test/run_tests.py /home/dominic/catkin_ws/src/warthog_teleop_twist_joy/cmake-build-debug/test_results/teleop_twist_joy/roslint-teleop_twist_joy.xml --working-dir /home/dominic/catkin_ws/src/warthog_teleop_twist_joy/cmake-build-debug "/opt/ros/melodic/share/roslint/cmake/../../../lib/roslint/test_wrapper /home/dominic/catkin_ws/src/warthog_teleop_twist_joy/cmake-build-debug/test_results/teleop_twist_joy/roslint-teleop_twist_joy.xml make roslint_teleop_twist_joy"
 
 run_tests_teleop_twist_joy_roslint_package: CMakeFiles/run_tests_teleop_twist_joy_roslint_package
 run_tests_teleop_twist_joy_roslint_package: CMakeFiles/run_tests_teleop_twist_joy_roslint_package.dir/build.make

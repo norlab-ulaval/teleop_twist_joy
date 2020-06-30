@@ -54,7 +54,7 @@ CMAKE_BINARY_DIR = /home/dominic/catkin_ws/src/warthog_teleop_twist_joy/cmake-bu
 include CMakeFiles/clean_test_results_teleop_twist_joy.dir/progress.make
 
 CMakeFiles/clean_test_results_teleop_twist_joy:
-	/usr/bin/python /opt/ros/melodic/share/catkin/cmake/test/remove_test_results.py /home/dominic/catkin_ws/src/warthog_teleop_twist_joy/cmake-build-debug/test_results/teleop_twist_joy
+	/usr/bin/python2 /opt/ros/melodic/share/catkin/cmake/test/remove_test_results.py /home/dominic/catkin_ws/src/warthog_teleop_twist_joy/cmake-build-debug/test_results/teleop_twist_joy
 
 clean_test_results_teleop_twist_joy: CMakeFiles/clean_test_results_teleop_twist_joy
 clean_test_results_teleop_twist_joy: CMakeFiles/clean_test_results_teleop_twist_joy.dir/build.make
