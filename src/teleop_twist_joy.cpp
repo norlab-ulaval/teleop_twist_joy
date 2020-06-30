@@ -43,10 +43,12 @@ struct TeleopTwistJoy::Impl
 {
   void joyCallback(const sensor_msgs::Joy::ConstPtr& joy);
   void sendCmdVelMsg(const sensor_msgs::Joy::ConstPtr& joy_msg, const std::string& which_map);
+  double getVal(const sensor_msgs::Joy::ConstPtr& joy_msg, const std::map<std::string, int>& axis_map, const std::map<std::string, double>& scale_map, const std::string& fieldname);
 
   ros::Subscriber joy_sub;
   ros::Publisher cmd_vel_pub;
 
+  double k_expo;
   int enable_button;
   int enable_turbo_button;
 
@@ -69,10 +71,11 @@ TeleopTwistJoy::TeleopTwistJoy(ros::NodeHandle* nh, ros::NodeHandle* nh_param)
   pimpl_ = new Impl;
 
   pimpl_->cmd_vel_pub = nh->advertise<geometry_msgs::Twist>("hri_cmd_vel", 1, true);
-  pimpl_->joy_sub = nh->subscribe<sensor_msgs::Joy>("hri_joy", 1, &TeleopTwistJoy::Impl::joyCallback, pimpl_);
+  pimpl_->joy_sub = nh->subscribe<sensor_msgs::Joy>("joy", 1, &TeleopTwistJoy::Impl::joyCallback, pimpl_);
 
   nh_param->param<int>("enable_button", pimpl_->enable_button, 0);
   nh_param->param<int>("enable_turbo_button", pimpl_->enable_turbo_button, -1);
+  nh_param->param<double>("k_expo", pimpl_->k_expo, 1);
 
   if (nh_param->getParam("axis_linear", pimpl_->axis_linear_map))
   {
@@ -123,8 +126,8 @@ TeleopTwistJoy::TeleopTwistJoy(ros::NodeHandle* nh, ros::NodeHandle* nh_param)
   pimpl_->sent_disable_msg = false;
 }
 
-double getVal(const sensor_msgs::Joy::ConstPtr& joy_msg, const std::map<std::string, int>& axis_map,
-              const std::map<std::string, double>& scale_map, const std::string& fieldname)
+    double TeleopTwistJoy::Impl::getVal(const sensor_msgs::Joy::ConstPtr& joy_msg, const std::map<std::string, int>& axis_map,
+                                        const std::map<std::string, double>& scale_map, const std::string& fieldname)
 {
   if (axis_map.find(fieldname) == axis_map.end() ||
       scale_map.find(fieldname) == scale_map.end() ||
@@ -133,7 +136,8 @@ double getVal(const sensor_msgs::Joy::ConstPtr& joy_msg, const std::map<std::str
     return 0.0;
   }
 
-  return joy_msg->axes[axis_map.at(fieldname)] * scale_map.at(fieldname);
+  return (pow(joy_msg->axes[axis_map.at(fieldname)], 3) * (k_expo - 1) + joy_msg->axes[axis_map.at(fieldname)]) / k_expo * scale_map.at(fieldname);
+//  return joy_msg->axes[axis_map.at(fieldname)] * scale_map.at(fieldname);
 }
 
 void TeleopTwistJoy::Impl::sendCmdVelMsg(const sensor_msgs::Joy::ConstPtr& joy_msg,
@@ -142,7 +146,7 @@ void TeleopTwistJoy::Impl::sendCmdVelMsg(const sensor_msgs::Joy::ConstPtr& joy_m
   // Initializes with zeros by default.
   geometry_msgs::Twist cmd_vel_msg;
 
-  cmd_vel_msg.linear.x = getVal(joy_msg, axis_linear_map, scale_linear_map[which_map], "x");
+  cmd_vel_msg.linear.x = pimpl_->getVal(joy_msg, axis_linear_map, scale_linear_map[which_map], "x");
   cmd_vel_msg.linear.y = getVal(joy_msg, axis_linear_map, scale_linear_map[which_map], "y");
   cmd_vel_msg.linear.z = getVal(joy_msg, axis_linear_map, scale_linear_map[which_map], "z");
   cmd_vel_msg.angular.z = getVal(joy_msg, axis_angular_map, scale_angular_map[which_map], "yaw");
