@@ -98,7 +98,7 @@ TeleopTwistJoy::TeleopTwistJoy(ros::NodeHandle* nh, ros::NodeHandle* nh_param)
   {
     nh_param->param<int>("axis_angular", pimpl_->axis_angular_map["yaw"], 0);
     nh_param->param<double>("scale_angular", pimpl_->scale_angular_map["normal"]["yaw"], 0.5);
-    nh_param->param<double>("scale_angular_turbo", pimpl_->scale_angular_map["turbo"]["x"], 1.0);
+    nh_param->param<double>("scale_angular_turbo", pimpl_->scale_angular_map["turbo"]["yaw"], 1.0);
   }
 
   ROS_INFO_NAMED("TeleopTwistJoy", "Teleop enable button %i.", pimpl_->enable_button);
