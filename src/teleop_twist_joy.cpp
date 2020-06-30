@@ -71,7 +71,7 @@ TeleopTwistJoy::TeleopTwistJoy(ros::NodeHandle* nh, ros::NodeHandle* nh_param)
   pimpl_ = new Impl;
 
   pimpl_->cmd_vel_pub = nh->advertise<geometry_msgs::Twist>("hri_cmd_vel", 1, true);
-  pimpl_->joy_sub = nh->subscribe<sensor_msgs::Joy>("joy", 1, &TeleopTwistJoy::Impl::joyCallback, pimpl_);
+  pimpl_->joy_sub = nh->subscribe<sensor_msgs::Joy>("hri_joy", 1, &TeleopTwistJoy::Impl::joyCallback, pimpl_);
 
   nh_param->param<int>("enable_button", pimpl_->enable_button, 0);
   nh_param->param<int>("enable_turbo_button", pimpl_->enable_turbo_button, -1);
