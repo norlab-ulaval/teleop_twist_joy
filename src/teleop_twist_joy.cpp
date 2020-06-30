@@ -159,11 +159,11 @@ void TeleopTwistJoy::Impl::sendCmdVelMsg(const sensor_msgs::Joy::ConstPtr& joy_m
 
 void TeleopTwistJoy::Impl::joyCallback(const sensor_msgs::Joy::ConstPtr& joy_msg)
 {
-  if (joy_msg->axes[enable_turbo_button] < 0)
+  if (joy_msg->axes[enable_turbo_button] < 750.0)
   {
       sendCmdVelMsg(joy_msg, "turbo");
   }
-  else if (joy_msg->axes[enable_button] < 0)
+  else if (joy_msg->axes[enable_button] < 750.0)
   {
       sendCmdVelMsg(joy_msg, "normal");
   }
