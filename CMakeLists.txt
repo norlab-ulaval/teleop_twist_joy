@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(teleop_twist_joy)
+project(warthog_teleop_twist_joy)
 
 find_package(catkin REQUIRED COMPONENTS geometry_msgs roscpp sensor_msgs)
 
@@ -11,7 +11,7 @@ catkin_package(
 
 include_directories(include ${catkin_INCLUDE_DIRS})
 
-add_library(${PROJECT_NAME} src/${PROJECT_NAME})
+add_library(${PROJECT_NAME} src/teleop_twist_joy)
 target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES})
 
 add_executable(${PROJECT_NAME}_node src/teleop_node.cpp)
