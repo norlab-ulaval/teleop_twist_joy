@@ -43,7 +43,8 @@ struct TeleopTwistJoy::Impl
 {
   void joyCallback(const sensor_msgs::Joy::ConstPtr& joy);
   void sendCmdVelMsg(const sensor_msgs::Joy::ConstPtr& joy_msg, const std::string& which_map);
-  double getVal(const sensor_msgs::Joy::ConstPtr& joy_msg, const std::map<std::string, int>& axis_map, const std::map<std::string, double>& scale_map, const std::string& fieldname);
+  double getVal(const sensor_msgs::Joy::ConstPtr& joy_msg, const std::map<std::string, int>& axis_map, const std::map<std::string,
+                double>& scale_map, const std::string& fieldname, const std::map<std::string, double>& turbo_scale_map);
 
   ros::Subscriber joy_sub;
   ros::Publisher cmd_vel_pub;
@@ -127,7 +128,8 @@ TeleopTwistJoy::TeleopTwistJoy(ros::NodeHandle* nh, ros::NodeHandle* nh_param)
 }
 
     double TeleopTwistJoy::Impl::getVal(const sensor_msgs::Joy::ConstPtr& joy_msg, const std::map<std::string, int>& axis_map,
-                                        const std::map<std::string, double>& scale_map, const std::string& fieldname)
+                                        const std::map<std::string, double>& scale_map, const std::string& fieldname,
+                                        const std::map<std::string, double>& turbo_scale_map)
 {
   if (axis_map.find(fieldname) == axis_map.end() ||
       scale_map.find(fieldname) == scale_map.end() ||
@@ -136,7 +138,8 @@ TeleopTwistJoy::TeleopTwistJoy(ros::NodeHandle* nh, ros::NodeHandle* nh_param)
     return 0.0;
   }
 
-  return (pow(joy_msg->axes[axis_map.at(fieldname)], 3) * (k_expo - 1) + joy_msg->axes[axis_map.at(fieldname)]) / k_expo * scale_map.at(fieldname);
+  double turbo_scale = (1.0 + fabs(joy_msg->axes[enable_turbo_button] * (turbo_scale_map.at(fieldname) - scale_map.at(fieldname))));
+  return (turbo_scale * (pow(joy_msg->axes[axis_map.at(fieldname)], 3) * (k_expo - 1) + joy_msg->axes[axis_map.at(fieldname)] / k_expo * scale_map.at(fieldname)));
 //  return joy_msg->axes[axis_map.at(fieldname)] * scale_map.at(fieldname);
 }
 
@@ -146,12 +149,12 @@ void TeleopTwistJoy::Impl::sendCmdVelMsg(const sensor_msgs::Joy::ConstPtr& joy_m
   // Initializes with zeros by default.
   geometry_msgs::Twist cmd_vel_msg;
 
-  cmd_vel_msg.linear.x = getVal(joy_msg, axis_linear_map, scale_linear_map[which_map], "x");
-  cmd_vel_msg.linear.y = getVal(joy_msg, axis_linear_map, scale_linear_map[which_map], "y");
-  cmd_vel_msg.linear.z = getVal(joy_msg, axis_linear_map, scale_linear_map[which_map], "z");
-  cmd_vel_msg.angular.z = getVal(joy_msg, axis_angular_map, scale_angular_map[which_map], "yaw");
-  cmd_vel_msg.angular.y = getVal(joy_msg, axis_angular_map, scale_angular_map[which_map], "pitch");
-  cmd_vel_msg.angular.x = getVal(joy_msg, axis_angular_map, scale_angular_map[which_map], "roll");
+  cmd_vel_msg.linear.x = getVal(joy_msg, axis_linear_map, scale_linear_map[which_map], "x", scale_linear_map["turbo"]);
+  cmd_vel_msg.linear.y = getVal(joy_msg, axis_linear_map, scale_linear_map[which_map], "y", scale_linear_map["turbo"]);
+  cmd_vel_msg.linear.z = getVal(joy_msg, axis_linear_map, scale_linear_map[which_map], "z", scale_linear_map["turbo"]);
+  cmd_vel_msg.angular.z = getVal(joy_msg, axis_angular_map, scale_angular_map[which_map], "yaw", scale_angular_map["turbo"]);
+  cmd_vel_msg.angular.y = getVal(joy_msg, axis_angular_map, scale_angular_map[which_map], "pitch", scale_angular_map["turbo"]);
+  cmd_vel_msg.angular.x = getVal(joy_msg, axis_angular_map, scale_angular_map[which_map], "roll", scale_angular_map["turbo"]);
 
   cmd_vel_pub.publish(cmd_vel_msg);
   sent_disable_msg = false;
@@ -161,14 +164,7 @@ void TeleopTwistJoy::Impl::joyCallback(const sensor_msgs::Joy::ConstPtr& joy_msg
 {
   if (joy_msg->axes[enable_button] < -750.0)
   {
-      if (joy_msg->axes[enable_turbo_button] < -750.0)
-      {
-            sendCmdVelMsg(joy_msg, "turbo");
-      }
-      else
-      {
-            sendCmdVelMsg(joy_msg, "normal");
-      }
+      sendCmdVelMsg(joy_msg, "normal");
   }
   else
   {
