@@ -51,6 +51,8 @@ struct TeleopTwistJoy::Impl
   double k_expo;
   int enable_button;
   int enable_turbo_button;
+  double scale_linear;
+  double scale_linear_turbo;
 
   std::map<std::string, int> axis_linear_map;
   std::map< std::string, std::map<std::string, double> > scale_linear_map;
@@ -136,8 +138,8 @@ TeleopTwistJoy::TeleopTwistJoy(ros::NodeHandle* nh, ros::NodeHandle* nh_param)
     return 0.0;
   }
 
-  return (joy_msg->axes[enable_turbo_button] * (scale_map.at("turbo") - (scale_map.at(fieldname))
-  * (pow(joy_msg->axes[axis_map.at(fieldname)], 3) * (k_expo - 1) + joy_msg->axes[axis_map.at(fieldname)]) / k_expo * scale_map.at(fieldname)));
+  return (joy_msg->axes[enable_turbo_button] * (scale_linear_turbo - scale_linear)
+  + (pow(joy_msg->axes[axis_map.at(fieldname)], 3) * (k_expo - 1) + joy_msg->axes[axis_map.at(fieldname)]) / k_expo * scale_map.at(fieldname));
 //  return joy_msg->axes[axis_map.at(fieldname)] * scale_map.at(fieldname);
 }
 
