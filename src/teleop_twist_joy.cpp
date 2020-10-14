@@ -136,7 +136,8 @@ TeleopTwistJoy::TeleopTwistJoy(ros::NodeHandle* nh, ros::NodeHandle* nh_param)
     return 0.0;
   }
 
-  return (pow(joy_msg->axes[axis_map.at(fieldname)], 3) * (k_expo - 1) + joy_msg->axes[axis_map.at(fieldname)]) / k_expo * scale_map.at(fieldname);
+  return (joy_msg->axes[axis_map.at(fieldname)] * (scale_map.at("turbo") -(scale_map.at(fieldname))
+  * (pow(joy_msg->axes[axis_map.at(fieldname)], 3) * (k_expo - 1) + joy_msg->axes[axis_map.at(fieldname)]) / k_expo * scale_map.at(fieldname)));
 //  return joy_msg->axes[axis_map.at(fieldname)] * scale_map.at(fieldname);
 }
 
@@ -161,14 +162,7 @@ void TeleopTwistJoy::Impl::joyCallback(const sensor_msgs::Joy::ConstPtr& joy_msg
 {
   if (joy_msg->axes[enable_button] < -750.0)
   {
-      if (joy_msg->axes[enable_turbo_button] < -750.0)
-      {
-            sendCmdVelMsg(joy_msg, "turbo");
-      }
-      else
-      {
-            sendCmdVelMsg(joy_msg, "normal");
-      }
+      sendCmdVelMsg(joy_msg, "normal");
   }
   else
   {
