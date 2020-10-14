@@ -44,8 +44,7 @@ struct TeleopTwistJoy::Impl
   void joyCallback(const sensor_msgs::Joy::ConstPtr& joy);
   void sendCmdVelMsg(const sensor_msgs::Joy::ConstPtr& joy_msg, const std::string& which_map);
   double getVal(const sensor_msgs::Joy::ConstPtr& joy_msg, const std::map<std::string, int>& axis_map, const std::map<std::string,
-                double>& scale_map, const std::string& fieldname, std::map<std::basic_string<char>, double,
-                        std::less<std::basic_string<char>>, std::allocator<std::pair<const std::basic_string<char>, double>>> turbo_scale_map);
+                double>& scale_map, const std::string& fieldname, const std::map<std::string, double>& turbo_scale_map);
 
   ros::Subscriber joy_sub;
   ros::Publisher cmd_vel_pub;
@@ -130,8 +129,7 @@ TeleopTwistJoy::TeleopTwistJoy(ros::NodeHandle* nh, ros::NodeHandle* nh_param)
 
     double TeleopTwistJoy::Impl::getVal(const sensor_msgs::Joy::ConstPtr& joy_msg, const std::map<std::string, int>& axis_map,
                                         const std::map<std::string, double>& scale_map, const std::string& fieldname,
-                                        std::map<std::basic_string<char>, double, std::less<std::basic_string<char>>,
-                                        std::allocator<std::pair<const std::basic_string<char>, double>>> turbo_scale_map)
+                                        const std::map<std::string, double>& turbo_scale_map)
 {
   if (axis_map.find(fieldname) == axis_map.end() ||
       scale_map.find(fieldname) == scale_map.end() ||
