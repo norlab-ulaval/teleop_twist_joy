@@ -1,10 +1,10 @@
 axis_linear: 4  # Right thumb stick vertical
 scale_linear: 0.0015
-scale_linear_turbo: 0.005
+scale_linear_turbo: 0.0038
 
 axis_angular: 3  # Right thumb stick horizontal
 scale_angular: -0.0015
-scale_angular_turbo: -0.005
+scale_angular_turbo: -0.0038
 
 #axis_linear: 4  # Right thumb stick vertical
 #scale_linear: 0.7
@@ -17,4 +17,4 @@ scale_angular_turbo: -0.005
 enable_button: 5  # Right trigger button
 enable_turbo_button: 2  # Left trigger button
 
-expo_coeff: 2 # Exponential curve coefficient
+expo_coeff: 3 # Exponential curve coefficient

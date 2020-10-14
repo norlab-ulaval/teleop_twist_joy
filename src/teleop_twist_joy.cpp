@@ -138,8 +138,8 @@ TeleopTwistJoy::TeleopTwistJoy(ros::NodeHandle* nh, ros::NodeHandle* nh_param)
     return 0.0;
   }
 
-  return (1023-joy_msg->axes[enable_turbo_button] * (turbo_scale_map.at(fieldname) - scale_map.at(fieldname)) *
-  (pow(joy_msg->axes[axis_map.at(fieldname)], 3) * (k_expo - 1) + joy_msg->axes[axis_map.at(fieldname)] / k_expo * scale_map.at(fieldname)));
+  double turbo_scale = (1.0 + fabs(joy_msg->axes[enable_turbo_button] * (turbo_scale_map.at(fieldname) - scale_map.at(fieldname))));
+  return (turbo_scale * (pow(joy_msg->axes[axis_map.at(fieldname)], 3) * (k_expo - 1) + joy_msg->axes[axis_map.at(fieldname)] / k_expo * scale_map.at(fieldname)));
 //  return joy_msg->axes[axis_map.at(fieldname)] * scale_map.at(fieldname);
 }
 
