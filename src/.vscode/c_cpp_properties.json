@@ -1,0 +1,26 @@
+{
+  "configurations": [
+    {
+      "browse": {
+        "databaseFilename": "${default}",
+        "limitSymbolsToIncludedHeaders": false
+      },
+      "includePath": [
+        "/home/administrator/catkin_ws/devel/include/**",
+        "/opt/ros/kinetic/include/**",
+        "/home/administrator/catkin_ws/src/hri_safety_sense/include/**",
+        "/home/administrator/catkin_ws/src/power_consumption_node_ros/include/**",
+        "/home/administrator/catkin_ws/src/sysnergie_batteries_ros/sysnergie_logger/include/**",
+        "/home/administrator/catkin_ws/src/sysnergie_batteries_ros/sysnergie_msgs/include/**",
+        "/home/administrator/catkin_ws/src/warthog_teleop_twist_joy/include/**",
+        "/usr/include/**"
+      ],
+      "name": "ROS",
+      "intelliSenseMode": "gcc-x64",
+      "compilerPath": "/usr/bin/gcc",
+      "cStandard": "gnu11",
+      "cppStandard": "c++14"
+    }
+  ],
+  "version": 4
+}

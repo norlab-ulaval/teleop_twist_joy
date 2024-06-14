@@ -1,6 +1,7 @@
 axis_linear: 4  # Right thumb stick vertical
-scale_linear: 0.0015
-scale_linear_turbo: 0.0038
+scale_linear: 0.0015 # tracks
+#scale_linear: 0.0007896 # For Olivier experiment, to drive at 0.5 m/s on tracks
+scale_linear_turbo: -0.0038
 
 axis_angular: 3  # Right thumb stick horizontal
 scale_angular: -0.0015
@@ -18,3 +19,6 @@ enable_button: 5  # Right trigger button
 enable_turbo_button: 2  # Left trigger button
 
 expo_coeff: 3 # Exponential curve coefficient
+base_width: 1.1652 # center of wheel left to center of wheel right. in meters
+enable_track_control_button: 6 #button 6 is marked by a "3" on the warthog controller
+deadzone: 100 # on the controller the inputs are from -1023 to 1023, so 100 is 1/10 of total value 

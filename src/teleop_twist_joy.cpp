@@ -53,6 +53,12 @@ struct TeleopTwistJoy::Impl
   int enable_button;
   int enable_turbo_button;
 
+  float base_width;
+  int enable_track_control_button;
+  float deadzone;
+  int track_on;
+  int timer;
+
   std::map<std::string, int> axis_linear_map;
   std::map< std::string, std::map<std::string, double> > scale_linear_map;
 
@@ -73,10 +79,14 @@ TeleopTwistJoy::TeleopTwistJoy(ros::NodeHandle* nh, ros::NodeHandle* nh_param)
 
   pimpl_->cmd_vel_pub = nh->advertise<geometry_msgs::Twist>("hri_cmd_vel", 1, true);
   pimpl_->joy_sub = nh->subscribe<sensor_msgs::Joy>("hri_joy", 1, &TeleopTwistJoy::Impl::joyCallback, pimpl_);
-
+  pimpl_->track_on = 1;
+  pimpl_->timer = 0;
   nh_param->param<int>("enable_button", pimpl_->enable_button, 0);
   nh_param->param<int>("enable_turbo_button", pimpl_->enable_turbo_button, -1);
+  nh_param->param<int>("enable_track_control_button", pimpl_->enable_track_control_button, 6);
   nh_param->param<double>("k_expo", pimpl_->k_expo, 1);
+  nh_param->param<float>("base_width", pimpl_->base_width, 1.1652);
+  nh_param->param<float>("deadzone", pimpl_->deadzone, 0);
 
   if (nh_param->getParam("axis_linear", pimpl_->axis_linear_map))
   {
@@ -143,19 +153,51 @@ TeleopTwistJoy::TeleopTwistJoy(ros::NodeHandle* nh, ros::NodeHandle* nh_param)
 //  return joy_msg->axes[axis_map.at(fieldname)] * scale_map.at(fieldname);
 }
 
+//init the motionconverter func that whe are using later in the class
 void TeleopTwistJoy::Impl::sendCmdVelMsg(const sensor_msgs::Joy::ConstPtr& joy_msg,
                                          const std::string& which_map)
 {
   // Initializes with zeros by default.
   geometry_msgs::Twist cmd_vel_msg;
-
+if ( track_on == 1)
+{
   cmd_vel_msg.linear.x = getVal(joy_msg, axis_linear_map, scale_linear_map[which_map], "x", scale_linear_map["turbo"]);
   cmd_vel_msg.linear.y = getVal(joy_msg, axis_linear_map, scale_linear_map[which_map], "y", scale_linear_map["turbo"]);
   cmd_vel_msg.linear.z = getVal(joy_msg, axis_linear_map, scale_linear_map[which_map], "z", scale_linear_map["turbo"]);
   cmd_vel_msg.angular.z = getVal(joy_msg, axis_angular_map, scale_angular_map[which_map], "yaw", scale_angular_map["turbo"]);
   cmd_vel_msg.angular.y = getVal(joy_msg, axis_angular_map, scale_angular_map[which_map], "pitch", scale_angular_map["turbo"]);
   cmd_vel_msg.angular.x = getVal(joy_msg, axis_angular_map, scale_angular_map[which_map], "roll", scale_angular_map["turbo"]);
+}
 
+else if (track_on ==-1)
+{
+//getVal(joy_msg)
+  float left_stick_value = joy_msg->axes[1] *0.0015/2; // * scale_linear_map[which_map].at("x")/2;
+  float right_stick_value = joy_msg->axes[4] *0.0015/2; //* scale_linear_map[which_map].at("x")/2;
+  float vel_x = left_stick_value + right_stick_value;
+  float angular_vel_z = (1/base_width) * (right_stick_value - left_stick_value);
+
+  
+  if 
+  
+      ((left_stick_value < deadzone && left_stick_value > -deadzone) 
+      
+      && 
+      
+      (right_stick_value < deadzone && right_stick_value > -deadzone))
+      //if BOTH joy sticks are near default(0), send no message
+  {
+    cmd_vel_msg.linear.x = 0;
+    cmd_vel_msg.angular.z = 0;
+    
+  }
+  else
+  {
+    cmd_vel_msg.linear.x = vel_x;
+    cmd_vel_msg.angular.z = angular_vel_z;
+    
+  }
+}
   cmd_vel_pub.publish(cmd_vel_msg);
   sent_disable_msg = false;
 }
@@ -164,6 +206,19 @@ void TeleopTwistJoy::Impl::joyCallback(const sensor_msgs::Joy::ConstPtr& joy_msg
 {
   if (joy_msg->axes[enable_button] < -750.0)
   {
+
+    if (joy_msg->buttons[enable_track_control_button])
+    {
+      if (timer > 25)
+      {
+        
+
+        track_on = track_on*-1;
+        timer = 0;
+      }
+
+    }
+  timer ++; 
       sendCmdVelMsg(joy_msg, "normal");
   }
   else
