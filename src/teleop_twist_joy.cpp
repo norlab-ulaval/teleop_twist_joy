@@ -172,8 +172,9 @@ if ( track_on == 1)
 else if (track_on ==-1)
 {
 //getVal(joy_msg)
-  float left_stick_value = joy_msg->axes[1] *0.0015/2; // * scale_linear_map[which_map].at("x")/2;
-  float right_stick_value = joy_msg->axes[4] *0.0015/2; //* scale_linear_map[which_map].at("x")/2;
+  double turbo_scale = (1.0 + fabs(joy_msg->axes[enable_turbo_button] * (scale_linear_map["turbo"].at("x") - scale_linear_map[which_map].at("x"))));
+  float left_stick_value = joy_msg->axes[1] ; // * scale_linear_map[which_map].at("x")/2;
+  float right_stick_value = joy_msg->axes[4] ; //* scale_linear_map[which_map].at("x")/2;
   float vel_x = left_stick_value + right_stick_value;
   float angular_vel_z = (1/base_width) * (right_stick_value - left_stick_value);
 
@@ -193,8 +194,8 @@ else if (track_on ==-1)
   }
   else
   {
-    cmd_vel_msg.linear.x = vel_x;
-    cmd_vel_msg.angular.z = angular_vel_z;
+    cmd_vel_msg.linear.x = turbo_scale * vel_x * scale_linear_map[which_map].at("x")/2;
+    cmd_vel_msg.angular.z = turbo_scale* angular_vel_z  *scale_linear_map[which_map].at("x")/2;
     
   }
 }
