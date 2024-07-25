@@ -58,6 +58,8 @@ struct TeleopTwistJoy::Impl
   float deadzone;
   int track_on;
   int timer;
+  int dead_man_switch_button;
+  bool dead_man_activated; //adds dead_man
 
   std::map<std::string, int> axis_linear_map;
   std::map< std::string, std::map<std::string, double> > scale_linear_map;
@@ -87,6 +89,7 @@ TeleopTwistJoy::TeleopTwistJoy(ros::NodeHandle* nh, ros::NodeHandle* nh_param)
   nh_param->param<double>("k_expo", pimpl_->k_expo, 1);
   nh_param->param<float>("base_width", pimpl_->base_width, 1.1652);
   nh_param->param<float>("deadzone", pimpl_->deadzone, 0);
+  nh_param->param<int>("dead_man_switch_button", pimpl_->dead_man_switch_button, 4); //dead_man
 
   if (nh_param->getParam("axis_linear", pimpl_->axis_linear_map))
   {
@@ -159,7 +162,15 @@ void TeleopTwistJoy::Impl::sendCmdVelMsg(const sensor_msgs::Joy::ConstPtr& joy_m
 {
   // Initializes with zeros by default.
   geometry_msgs::Twist cmd_vel_msg;
-if ( track_on == 1)
+if (dead_man_activated == false) //first checks deadman
+{
+    cmd_vel_msg.linear.x = 0;
+    cmd_vel_msg.angular.z = 0;
+    
+  }
+
+
+else if ( track_on == 1)
 {
   cmd_vel_msg.linear.x = getVal(joy_msg, axis_linear_map, scale_linear_map[which_map], "x", scale_linear_map["turbo"]);
   cmd_vel_msg.linear.y = getVal(joy_msg, axis_linear_map, scale_linear_map[which_map], "y", scale_linear_map["turbo"]);
@@ -204,9 +215,20 @@ else if (track_on ==-1)
 }
 
 void TeleopTwistJoy::Impl::joyCallback(const sensor_msgs::Joy::ConstPtr& joy_msg)
-{
-  if (joy_msg->axes[enable_button] < -750.0)
+{ if (joy_msg->buttons[dead_man_switch_button])
   {
+    dead_man_activated = true;
+    sent_disable_msg = true; //test
+  }
+  else
+  {
+    dead_man_activated = false;
+  }
+
+
+
+  if (joy_msg->axes[enable_button] < -750.0)
+  { dead_man_activated = true;
 
     if (joy_msg->buttons[enable_track_control_button])
     {

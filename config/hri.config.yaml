@@ -1,3 +1,5 @@
+dead_man_switch_button: 4 #is button marked with a 1 on warthog controller
+
 axis_linear: 4  # Right thumb stick vertical
 scale_linear: 0.0015 # tracks
 #scale_linear: 0.0007896 # For Olivier experiment, to drive at 0.5 m/s on tracks
