@@ -162,12 +162,18 @@ void TeleopTwistJoy::Impl::sendCmdVelMsg(const sensor_msgs::Joy::ConstPtr& joy_m
 {
   // Initializes with zeros by default.
   geometry_msgs::Twist cmd_vel_msg;
+  dead_man_activated = false;
 if (dead_man_activated == false) //first checks deadman
 {
-    cmd_vel_msg.linear.x = 0;
+    cmd_vel_msg.linear.x = 0.0;
     cmd_vel_msg.angular.z = 0;
+    sent_disable_msg = true;
+
+    cmd_vel_pub.publish(cmd_vel_msg);
+    //std::cout << "Dead_man_False_TEST"<< std::endl;
+
     
-  }
+  } 
 
 
 else if ( track_on == 1)
@@ -218,7 +224,7 @@ void TeleopTwistJoy::Impl::joyCallback(const sensor_msgs::Joy::ConstPtr& joy_msg
 { if (joy_msg->buttons[dead_man_switch_button])
   {
     dead_man_activated = true;
-    sent_disable_msg = true; //test
+    //sent_disable_msg = true; //test
   }
   else
   {
@@ -244,18 +250,22 @@ void TeleopTwistJoy::Impl::joyCallback(const sensor_msgs::Joy::ConstPtr& joy_msg
   timer ++; 
       sendCmdVelMsg(joy_msg, "normal");
   }
+  //
   else
   {
-    // When enable button is released, immediately send a single no-motion command
-    // in order to stop the robot.
-    if (!sent_disable_msg)
-    {
-      // Initializes with zeros by default.
-      geometry_msgs::Twist cmd_vel_msg;
-      cmd_vel_pub.publish(cmd_vel_msg);
-      sent_disable_msg = true;
-    }
+    sendCmdVelMsg(joy_msg, "normal");
+  //  // When enable button is released, immediately send a single no-motion command
+  //  // in order to stop the robot.
+  //  if (!sent_disable_msg)
+  //  {
+  //    // Initializes with zeros by default.
+  //    geometry_msgs::Twist cmd_vel_msg;
+  //    cmd_vel_pub.publish(cmd_vel_msg);
+  //    sent_disable_msg = true;
+  //  }
   }
+      // Initializes w
+      
 }
 
 }  // namespace teleop_twist_joy
