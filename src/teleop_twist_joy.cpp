@@ -162,14 +162,14 @@ void TeleopTwistJoy::Impl::sendCmdVelMsg(const sensor_msgs::Joy::ConstPtr& joy_m
 {
   // Initializes with zeros by default.
   geometry_msgs::Twist cmd_vel_msg;
-  dead_man_activated = false;
+  //dead_man_activated = false;
 if (dead_man_activated == false) //first checks deadman
 {
     cmd_vel_msg.linear.x = 0.0;
     cmd_vel_msg.angular.z = 0;
-    sent_disable_msg = true;
+    //sent_disable_msg = true;
 
-    cmd_vel_pub.publish(cmd_vel_msg);
+    //cmd_vel_pub.publish(cmd_vel_msg);
     //std::cout << "Dead_man_False_TEST"<< std::endl;
 
     
@@ -216,8 +216,11 @@ else if (track_on ==-1)
     
   }
 }
-  cmd_vel_pub.publish(cmd_vel_msg);
-  sent_disable_msg = false;
+if (dead_man_activated == false or (joy_msg->axes[enable_button] < -750.0)) 
+{
+cmd_vel_pub.publish(cmd_vel_msg);
+  //sent_disable_msg = false;
+}
 }
 
 void TeleopTwistJoy::Impl::joyCallback(const sensor_msgs::Joy::ConstPtr& joy_msg)
@@ -234,7 +237,7 @@ void TeleopTwistJoy::Impl::joyCallback(const sensor_msgs::Joy::ConstPtr& joy_msg
 
 
   if (joy_msg->axes[enable_button] < -750.0)
-  { dead_man_activated = true;
+  { dead_man_activated = true; // when dead_man = true, teleop_twist doesn't publish, thus enabling controllers.
 
     if (joy_msg->buttons[enable_track_control_button])
     {
